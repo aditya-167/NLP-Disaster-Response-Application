@@ -1,1 +1,1 @@
-web: gunicorn --chdir app run:app
+web: sh -c 'cd app && python3 run.py'
