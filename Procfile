@@ -1,1 +1,1 @@
-web: gunicorn appfile application:app
+web: gunicorn appfile.application:app --preload
