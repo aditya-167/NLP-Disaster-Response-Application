@@ -37,11 +37,11 @@ class Begin_verb(BaseEstimator, TransformerMixin):
 '''
 
 # load data
-engine = create_engine('sqlite:///appfile/data/DisasterResponse.db')
+engine = create_engine('sqlite:///data/DisasterResponse.db')
 df = pd.read_sql_table('ResponseTable', engine)
 
 # load model
-model = joblib.load("appfile/models/classifier.pkl")
+model = joblib.load("models/classifier.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
