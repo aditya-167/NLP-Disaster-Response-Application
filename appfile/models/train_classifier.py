@@ -32,7 +32,7 @@ def load_data(database_filepath):
         category_names -> used for app
     """
     engine = create_engine('sqlite:///'+database_filepath)
-    df = pd.read_sql_table('df',engine)
+    df = pd.read_sql_table("ResponseTable",engine)
     X = df['message']
     Y = df.iloc[:,4:]
     category_names = Y.columns

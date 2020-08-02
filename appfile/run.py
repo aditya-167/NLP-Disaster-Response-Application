@@ -38,7 +38,7 @@ class Begin_verb(BaseEstimator, TransformerMixin):
 
 # load data
 engine = create_engine('sqlite:///data/DisasterResponse.db')
-df = pd.read_sql_table('df', engine)
+df = pd.read_sql_table('ResponseTable', engine)
 
 # load model
 model = joblib.load("models/classifier.pkl")

@@ -51,7 +51,7 @@ def save_data(df, database_file):
     return : None
     """
     engine = sq.create_engine('sqlite:///'+ database_file)
-    df.to_sql('df', engine, index=False)
+    df.to_sql("ResponseTable", engine, index=False)
     pass  
 
 
