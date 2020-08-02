@@ -12,7 +12,6 @@ import joblib
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
-#from sklearn.externals import joblib
 from sqlalchemy import create_engine
 
 from herokutokenizer import Tokenizer, StartingVerbExtractor
@@ -38,11 +37,11 @@ class Begin_verb(BaseEstimator, TransformerMixin):
 '''
 
 # load data
-engine = create_engine('sqlite:///../data/DisasterResponse.db')
+engine = create_engine('sqlite:///data/DisasterResponse.db')
 df = pd.read_sql_table('df', engine)
 
 # load model
-model = joblib.load("../models/classifier.pkl")
+model = joblib.load("models/classifier.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
@@ -126,5 +125,5 @@ def go():
 #    app.run(debug=True)
 
 
-#if __name__ == '__main__':
-#    app.run()
+if __name__ == '__main__':
+    app.run()

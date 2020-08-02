@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/aditya/response-app/appenv"
+VIRTUAL_ENV="/home/aditya/Disaster_Response_App/appenv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

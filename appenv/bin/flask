@@ -1,4 +1,4 @@
-#!/home/aditya/response-app/appenv/bin/python3
+#!/home/aditya/Disaster_Response_App/appenv/bin/python3
 
 # -*- coding: utf-8 -*-
 import re

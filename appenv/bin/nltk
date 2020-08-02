@@ -1,4 +1,4 @@
-#!/home/aditya/response-app/appenv/bin/python3
+#!/home/aditya/Disaster_Response_App/appenv/bin/python3
 # EASY-INSTALL-ENTRY-SCRIPT: 'nltk==3.5','console_scripts','nltk'
 __requires__ = 'nltk==3.5'
 import re
