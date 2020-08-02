@@ -14,7 +14,7 @@ from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
 #from sklearn.externals import joblib
 from sqlalchemy import create_engine
-
+from .utils import tokenize
 
 app = Flask(__name__)
 
@@ -47,6 +47,7 @@ def tokenize(text):
 
     return clean_tokens
 
+
 # load data
 engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('df', engine)
@@ -60,15 +61,11 @@ model = joblib.load("../models/classifier.sav")
 @app.route('/index')
 def index():
     
-    # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
     category_names = df.iloc[:,4:].columns
     category_boolean = (df.iloc[:,4:] != 0).sum().values
-    # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
             'data': [
@@ -140,6 +137,6 @@ def go():
 #    app.run(debug=True)
 
 
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+#if __name__ == '__main__':
+#    port = int(os.environ.get("PORT", 5000))
+#    app.run(host='0.0.0.0', port=port)
