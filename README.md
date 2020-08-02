@@ -11,7 +11,8 @@
 2. Run the following command in the app's directory to run your web app.
     `python run.py`
 
-3. Go to http://0.0.0.0:3001/
+3. Go to address that the screen outputs for local hosted web app
 
+The Heroku deployed web app is this repo - https://github.com/aditya-167/Heroku-disaster-message-classifier 
+Web Application : https://my-disaster-app.herokuapp.com/
 
-gunicorn==20.0.4
