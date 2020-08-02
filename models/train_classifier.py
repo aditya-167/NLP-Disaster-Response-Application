@@ -15,9 +15,10 @@ from sqlalchemy import create_engine
 import re
 import numpy as np
 import nltk
+from herokutokenizer import Tokenizer, StartingVerbExtractor
 
 
-nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger'])
+nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger','stopwords'])
 
 def load_data(database_filepath):
     """
@@ -37,32 +38,7 @@ def load_data(database_filepath):
     category_names = Y.columns
     return X, Y, category_names
 
-
-def tokenize(text):
-    """
-    Tokenize function
-    
-    Arguments:
-        text -> list of text messages (english)
-    Output:
-        clean_tags -> tokenized text, clean for ML modeling
-    """
-    url = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
-    found_url = re.findall(url, text)
-    for i in found_url:
-        text = text.replace(i, "<URL>")
-
-    tags = word_tokenize(text)
-    lemmatizer = WordNetLemmatizer()
-
-    clean_tags = []
-    for i in tags:
-        tag = lemmatizer.lemmatize(i).lower().strip()
-        clean_tags.append(tag)
-
-    return clean_tags
-
-
+'''
 class Begin_verb(BaseEstimator, TransformerMixin):
     """
     initial beginning verb extractor class to extract verbs from 
@@ -88,6 +64,7 @@ class Begin_verb(BaseEstimator, TransformerMixin):
         return pd.DataFrame(X_tag)
 
 
+'''
 
 def build_model():
     """
@@ -100,11 +77,12 @@ def build_model():
         ('features', FeatureUnion([
 
             ('textpipeline', Pipeline([
-                ('vectorize', CountVectorizer(tokenizer=tokenize)),
+		('tokenizer', Tokenizer()),
+                ('vectorize', CountVectorizer()),
                 ('Tfidf', TfidfTransformer())
             ])),
 
-            ('begin_verb', Begin_verb())
+            ('begin_verb', StartingVerbExtractor())
         ])),
 
         ('clf', MultiOutputClassifier(AdaBoostClassifier()))
