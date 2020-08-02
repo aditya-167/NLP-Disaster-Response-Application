@@ -1,1 +1,1 @@
-web: gunicorn --chdir app run:app
+web: gunicorn run:app
