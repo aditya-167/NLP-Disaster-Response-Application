@@ -13,7 +13,7 @@ from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
 from sqlalchemy import create_engine
-
+#from appfile import app
 from herokutokenizer import Tokenizer, StartingVerbExtractor
 app = Flask(__name__)
 '''
@@ -123,5 +123,5 @@ def go():
 
 
 
-#if __name__ == '__main__':
-#    app.run()
+if __name__ == '__main__':
+    app.run(port="5001",host="0.0.0.0",debug=True)
