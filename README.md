@@ -1,7 +1,5 @@
-# Disaster Response Pipeline Project
+# Disaster Response Pipeline Project (NLP,ETL and ML model)
 
-
-# Disaster Response ETL, ML pipelines and Web application.
 
 ### Motivation
 The purpose of the project is to build a model for an API that classifies disaster messages.
