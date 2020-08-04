@@ -28,17 +28,38 @@ def clean_data(df):
     return:
         df : clean data Pandas DataFrame
     """
-    categories = df.categories.str.split(pat=';',expand=True)
-    row = categories.iloc[0,:]
-    category_colnames = row.apply(lambda x:x[:-2])
+    categories = df['categories'].str.split(';',expand = True)
+
+    # selecting the first row of the categories dataframe to extract column names
+    row = categories.loc[0]
+
+    # creating a list of category column names
+    category_colnames = [category[:len(category)-2] for category in row ]
+
+    # renaming the columns of `categories` dataframe
     categories.columns = category_colnames
+
+    # now converting category values to just numbers 0 or 1
     for column in categories:
-        categories[column] = categories[column].str[-1]
-        categories[column] = categories[column].astype(np.int)
-    df.drop('categories',axis=1,inplace=True)
-    df = pd.concat([df,categories],axis=1) 
-    df.drop_duplicates(inplace=True)
-    return df
+
+    	# setting each value to be the last character of the string
+    	categories[column] = categories[column].str[-1]
+    
+    	# converting column from string to numeric
+    	categories[column] = pd.to_numeric(categories[column])
+
+    # replacing categories column in df with new category columns.
+    df = df.drop('categories',axis = 1)
+    
+    # concatenating the original dataframe with the new `categories` dataframe
+    df = pd.concat([df,categories],axis = 1)
+
+    # removing duplicates
+    cleaned_df = df.drop_duplicates(keep = 'first')
+    #convert to binaries by dropping '2'
+    df.drop(df.loc[df['related']==2].index, inplace=True)
+    print(df["related"].value_counts())
+    return cleaned_df
 
 
 def save_data(df, database_file):
@@ -51,7 +72,7 @@ def save_data(df, database_file):
     return : None
     """
     engine = sq.create_engine('sqlite:///'+ database_file)
-    df.to_sql("ResponseTable", engine, index=False)
+    df.to_sql("ResponseTable", engine, index=False,if_exists='replace')
     pass  
 
 

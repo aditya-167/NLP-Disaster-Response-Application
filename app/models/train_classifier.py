@@ -15,8 +15,7 @@ from sqlalchemy import create_engine
 import re
 import numpy as np
 import nltk
-from herokutokenizer import Tokenizer, StartingVerbExtractor
-
+from sklearn.model_selection import GridSearchCV
 
 nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger','stopwords'])
 
@@ -38,33 +37,62 @@ def load_data(database_filepath):
     category_names = Y.columns
     return X, Y, category_names
 
-'''
-class Begin_verb(BaseEstimator, TransformerMixin):
+class StartingVerbExtractor(BaseEstimator, TransformerMixin):
     """
-    initial beginning verb extractor class to extract verbs from 
-    sentences to make a new feature. (More on this in ETL.ipynb)
-    A custom class implementation from sklearn BaseEstimator for better
-    results.
+    Starting Verb Extractor class
+    
+    This class extract the starting verb of a sentence,
+    creating a new feature for the ML classifier
     """
 
-    def begin_verb(self, text):
-        sentence = nltk.sent_tokenize(text)
-        for i in sentence:
-            pos_tags = nltk.pos_tag(tokenize(i))
-            f_word, f_tag = pos_tags[0]
-            if f_tag in ['VB', 'VBP'] or f_word == 'RT':
+    def starting_verb(self, text):
+        sentence_list = nltk.sent_tokenize(text)
+        for sentence in sentence_list:
+            pos_tags = nltk.pos_tag(tokenize(sentence))
+            first_word, first_tag = pos_tags[0]
+            if first_tag in ['VB', 'VBP'] or first_word == 'RT':
                 return True
         return False
 
-    def fit(self, X, y=None):
+    def fit(self, x, y=None):
         return self
 
     def transform(self, X):
-        X_tag = pd.Series(X).apply(self.begin_verb)
-        return pd.DataFrame(X_tag)
+        X_tagged = pd.Series(X).apply(self.starting_verb)
+        return pd.DataFrame(X_tagged)
 
+# custom tokenize function
+def tokenize(text):
+    """ 
+    Tokenize Function. 
+  
+    Cleaning The Data And Tokenizing Text. 
+  
+    Parameters: 
+    text (str): Text For Cleaning And Tokenizing (English).
+    
+    Returns: 
+    clean_tokens (List): Tokenized Text, Clean For ML Modeling
+    """
 
-'''
+    # removing urls 
+    url_regex='http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+    detected_urls = re.findall(url_regex, text)
+    for url in detected_urls:
+        text = text.replace(url, "<URL>")
+    
+    # tokenizing
+    tokens = word_tokenize(text)
+    
+    # lemmatizing
+    lemmatizer = WordNetLemmatizer()
+    
+    clean_tokens = []
+    for tok in tokens:
+        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+        clean_tokens.append(clean_tok)
+
+    return clean_tokens
 
 def build_model():
     """
@@ -73,20 +101,25 @@ def build_model():
     This function output is a Scikit ML Pipeline that process text messages
     according to NLP and apply a classifier, here I have used Adaboost classifier.
     """
-    model = Pipeline([
+    pipeline = Pipeline([
         ('features', FeatureUnion([
 
-            ('textpipeline', Pipeline([
-		('tokenizer', Tokenizer()),
-                ('vectorize', CountVectorizer()),
-                ('Tfidf', TfidfTransformer())
+            ('text_pipeline', Pipeline([
+                ('vect', CountVectorizer(tokenizer=tokenize)),
+                ('tfidf', TfidfTransformer())
             ])),
 
-            ('begin_verb', StartingVerbExtractor())
+            ('starting_verb', StartingVerbExtractor())
         ])),
 
         ('clf', MultiOutputClassifier(AdaBoostClassifier()))
     ])
+    
+    # parameters to grid search
+    parameters = { 'clf__estimator__n_estimators' : [50,60,70,80] }
+    
+    # initiating GridSearchCV method
+    model = GridSearchCV(pipeline, param_grid=parameters)
 
     return model
 

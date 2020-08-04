@@ -13,28 +13,63 @@ from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
 from sqlalchemy import create_engine
-#from appfile import app
-from herokutokenizer import Tokenizer, StartingVerbExtractor
+nltk.download('stopwords')
+import re
 app = Flask(__name__)
-'''
-class Begin_verb(BaseEstimator, TransformerMixin):
-  
-    def begin_verb(self, text):
-        sentence = nltk.sent_tokenize(text)
-        for i in sentence:
-            pos_tags = nltk.pos_tag(tokenize(i))
-            f_word, f_tag = pos_tags[0]
-            if f_tag in ['VB', 'VBP'] or f_word == 'RT':
+
+class StartingVerbExtractor(BaseEstimator, TransformerMixin):
+    """
+    Starting Verb Extractor class
+    
+    This class extract the starting verb of a sentence,
+    creating a new feature for the ML classifier
+    """
+
+    def starting_verb(self, text):
+        sentence_list = nltk.sent_tokenize(text)
+        for sentence in sentence_list:
+            pos_tags = nltk.pos_tag(sentence.split())
+            first_word, first_tag = pos_tags[0]
+            if first_tag in ['VB', 'VBP'] or first_word == 'RT':
                 return True
         return False
 
-    def fit(self, X, y=None):
+    def fit(self, x, y=None):
         return self
 
     def transform(self, X):
-        X_tag = pd.Series(X).apply(self.begin_verb)
-        return pd.DataFrame(X_tag)
-'''
+        X_tagged = pd.Series(X).apply(self.starting_verb)
+        return pd.DataFrame(X_tagged)
+
+def tokenize(text):
+    """ 
+	Tokenize Function. 
+	  
+	Cleaning The Data And Tokenizing Text. 
+	
+    Parameters: 
+	
+    text (str): Text For Cleaning And Tokenizing (English).
+	    
+	Returns: 
+	
+    clean_tokens (List): Tokenized Text, Clean For ML Modeling
+	"""
+    
+    # Define url pattern
+    url='http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+    found_url = re.findall(url,text)
+    for i in found_url:
+        text=text.replace(i,"<URL>")
+    tags = nltk.tokenize.word_tokenize(text)
+    lemmatized = nltk.stem.WordNetLemmatizer()
+    
+    final_tags = []
+    for i in tags:
+        final_tag = lemmatized.lemmatize(i).lower().strip()
+        final_tags.append(final_tag)
+    return final_tags
+
 
 # load data
 engine = create_engine('sqlite:///data/DisasterResponse.db')

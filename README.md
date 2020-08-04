@@ -20,10 +20,15 @@ The web app also displays visualizations of the data.
 ![file3](https://github.com/aditya-167/NLP-Disaster-Response-Application/blob/master/Screenshots/query.png)
 
 
+
+##### Web application on Heroku
+Web Application Link - https://my-disaster-app.herokuapp.com/
+
+
 ### Install
 This project requires Python 3.x and the following Python libraries installed:
 
-Run : - $pip install -r requirements.txt
+Run : - $pip install -r requirements.txt 
 
 1. NumPy
 2. Pandas
@@ -61,7 +66,10 @@ Run : - $pip install -r requirements.txt
 
 
 ### To train and run from scratch:
+
+
 1. Run the following commands in the project's root directory to set up your database and model.
+
 
     - To run ETL pipeline that cleans data and stores in database
         `python app/data/process_data.py app/data/disaster_messages.csv app/data/disaster_categories.csv app/data/DisasterResponse.db`
@@ -81,9 +89,6 @@ In a terminal navigate to the top-level project directory udacity-disaster-respo
 -  python train_classifier.py DisasterResponse.db classifier.pkl
 -  python run.py
 
-
-##### Web application on Heroku
-Web Application Link - https://my-disaster-app.herokuapp.com/
 
 ### Data observations
 As can be seen from test data visualization most of the classes (categories) are highly imbalanced. This affects model F1 prediction score. One using this project should take this into consideration and apply measures like synthetic data generation, model selection and parameters fine-tuning, etc.     
